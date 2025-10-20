@@ -1,4 +1,5 @@
 const User = require("../models/user_model");
+const Progress = require("../models/progress_model");
 const jwt = require("jsonwebtoken");
 
 // Registrar usuario
@@ -24,6 +25,15 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
+    // 👇 Crear documento de progreso asociado automáticamente
+    const newProgress = new Progress({
+      userId: newUser._id,
+      objetivo: 1500,
+      comida: 0,
+      ejercicio: 0,
+    });
+    await newProgress.save();
+
     res.status(201).json({
       message: "Usuario registrado con éxito",
       user: {
@@ -34,6 +44,7 @@ exports.register = async (req, res) => {
         altura: newUser.altura,
         peso: newUser.peso,
       },
+      progreso: newProgress,
     });
   } catch (error) {
     console.error("Error en registro:", error);
@@ -90,16 +101,22 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// ✅ Nuevo: Obtener progreso diario
+// Obtener progreso del usuario
 exports.getProgreso = async (req, res) => {
   try {
-    // Aquí puedes calcularlo dinámicamente o traerlo de la BD
-    // Por ahora devolvemos valores de ejemplo
-    const progreso = {
-      objetivo: 1500,
-      comida: 500,
-      ejercicio: 200,
-    };
+    let progreso = await Progress.findOne({ userId: req.userId });
+
+    // Si no existe, lo creamos en caliente
+    if (!progreso) {
+      progreso = new Progress({
+        userId: req.userId,
+        objetivo: 1500,
+        comida: 0,
+        ejercicio: 0,
+      });
+      await progreso.save();
+    }
+
     res.json(progreso);
   } catch (error) {
     console.error("Error al obtener progreso:", error);
@@ -140,7 +157,10 @@ exports.deleteUser = async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(req.userId);
     if (!deletedUser) return res.status(404).json({ error: "Usuario no encontrado" });
 
-    res.json({ message: "Usuario eliminado" });
+    // Eliminar también su progreso
+    await Progress.findOneAndDelete({ userId: req.userId });
+
+    res.json({ message: "Usuario y progreso eliminados" });
   } catch (error) {
     console.error("Error al eliminar usuario:", error);
     res.status(500).json({ error: "Error al eliminar usuario" });
