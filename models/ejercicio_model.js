@@ -4,10 +4,23 @@ const mongoose = require('mongoose');
 const EjercicioSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   descripcion: String,
-  categoria: { type: String, enum: ['fuerza', 'cardio', 'movilidad', 'trote', 'ciclismo', 'pilates', 'otro'], default: 'otro' },
+  categoria: { 
+    type: String, 
+    enum: ['fuerza', 'cardio', 'movilidad', 'trote', 'ciclismo', 'pilates', 'otro'], 
+    default: 'otro' 
+  },
   musculoObjetivo: String,
-  dificultad: { type: String, enum: ['básico', 'intermedio', 'avanzado'], default: 'básico' },
+  dificultad: { 
+    type: String, 
+    enum: ['básico', 'intermedio', 'avanzado'], 
+    default: 'básico' 
+  },
   duracion: Number, // en minutos
+  valor: { 
+    type: Number, 
+    required: true, 
+    default: 0 // 👈 calorías o puntos que aporta al progreso
+  },
   imagenUrl: String
 }, { timestamps: true });
 

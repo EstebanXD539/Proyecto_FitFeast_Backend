@@ -7,7 +7,12 @@ const userSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true, minlength: 6 }
+    password: { type: String, required: true, minlength: 6 },
+
+    // Nuevos campos para tu app
+    edad: { type: Number, default: 0 },
+    altura: { type: Number, default: 0 }, // en cm
+    peso: { type: Number, default: 0 },   // en kg
   },
   { timestamps: true }
 );
