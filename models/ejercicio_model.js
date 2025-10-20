@@ -19,7 +19,7 @@ const EjercicioSchema = new mongoose.Schema({
   valor: { 
     type: Number, 
     required: true, 
-    default: 0 // 👈 calorías o puntos que aporta al progreso
+    default: 0 
   },
   imagenUrl: String
 }, { timestamps: true });

@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // 👇 Crear documento de progreso asociado automáticamente
+    // Crear documento de progreso asociado automáticamente
     const newProgress = new Progress({
       userId: newUser._id,
       objetivo: 1500,
